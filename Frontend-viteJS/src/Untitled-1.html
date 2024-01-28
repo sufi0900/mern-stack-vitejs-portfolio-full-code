@@ -1,0 +1,172 @@
+
+import TwitterIcon from "@mui/icons-material/Twitter";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import Grid from "@mui/material/Grid";
+import ReactRotatingText from "react-rotating-text";
+
+import { useDispatch, useSelector } from "react-redux";
+import * as api from "./redux/api";
+import { useEffect } from "react";
+import {
+  getPortfolios,
+  getPortfoliosByUser,
+} from "./redux/features/portfolioSlice";
+import Spin from "./Spin";
+import { Container } from "@mui/material";
+const Home = () => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => ({ ...state.auth }));
+  const { currentPage } = useSelector((state) => ({
+    ...state.project,
+  }));
+
+  const { userPortfolios, loading } = useSelector((state) => ({
+    ...state.portfolio,
+  }));
+  const userId = user?.result?._id;
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(getPortfoliosByUser(userId));
+    }
+  }, [dispatch, userId]);
+
+  useEffect(() => {
+    dispatch(getPortfolios(currentPage));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, currentPage]);
+
+  const preloadNextPageData = async (currentPage) => {
+    const nextPage = currentPage + 1;
+    try {
+      await api.getPortfolios(nextPage);
+      // You can choose to store or use the preloaded data if needed
+    } catch (error) {
+      // Handle error
+    }
+  };
+
+  useEffect(() => {
+    preloadNextPageData(currentPage);
+  }, [currentPage]);
+
+  // Access the first item directly
+  useEffect(() => {
+    if (userId) {
+      dispatch(getPortfoliosByUser(userId)); // Pass the currentPage here
+    }
+  }, [dispatch, userId]);
+  useEffect(() => {
+    dispatch(getPortfolios(currentPage));
+    preloadNextPageData(currentPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, currentPage]);
+  if (loading) {
+    return <Spin />;
+  }
+  const firstPortfolio = userPortfolios[0];
+  const technologyArray = userPortfolios.map((item) => item.technology);
+  const svgStyle = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    zIndex: -1, // to position the SVG behind other content
+    width: "100%",
+    height: "100vh", // Set a fixed height for the SVG
+  };
+
+  return (
+    <Container>
+      <Grid container className="p-2 mt-2 h-screen " id="home">
+        <div className=" home Home-background-svg   flex">
+          <div>
+            <h1>
+              Hi, I am{" "}
+              <span
+                style={{ color: "#ff014f", textShadow: "1px 1px 1px black" }}
+              >
+                {user?.result && userPortfolios.length > 0 && (
+                  <span
+                    style={{
+                      color: "#ff014f",
+                      textShadow: "1px 1px 1px black",
+                    }}
+                  >
+                    {firstPortfolio && firstPortfolio.fullname}
+                  </span>
+                )}
+
+                {(!user?.result || userPortfolios.length === 0) && (
+                  <span>
+                    Welcome, please log in and create your portfolio to see
+                    data.
+                  </span>
+                )}
+              </span>
+              &nbsp; a
+              <br />
+              <span
+                style={{ color: "#ff014f", textShadow: "1px 1px 1px black" }}
+              >
+                {/* {userPortfolios &&
+                  userPortfolios.map((item) => (
+                    <list>
+                      {" "}
+                      <li>{item.jobtitle}</li>{" "}
+                    </list>
+                  ))} */}
+                {firstPortfolio && firstPortfolio.jobtitle}
+              </span>{" "}
+            </h1>
+
+            <p>{firstPortfolio && firstPortfolio.homeinfo}</p>
+            <div>
+              <h2>
+                Some of the web technologies i recently used are:
+                <br />
+                <span
+                  style={{
+                    color: "#ff014f",
+                    textShadow: "1px 1px 1px black",
+                  }}
+                >
+                  {" "}
+                  <ReactRotatingText items={technologyArray} />
+                </span>
+              </h2>
+            </div>
+            <div className="mt-4 flex justify-center  ">
+              <a
+                href="https://github.com/sufi0900"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mr-4 Social_Icon"
+              >
+                <GitHubIcon />
+              </a>
+              <a
+                href="https://twitter.com/your-twitter-handle"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mr-4 Social_Icon"
+              >
+                <TwitterIcon />
+              </a>
+              <a
+                href="https://linkedin.com/in/your-linkedin-profile"
+                target="_blank"
+                rel="noopener noreferrer "
+                className="Social_Icon"
+              >
+                <FacebookIcon />
+              </a>
+            </div>
+          </div>
+        </div>
+      </Grid>
+    </Container>
+  );
+};
+
+export default Home;
