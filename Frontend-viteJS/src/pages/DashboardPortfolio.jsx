@@ -76,7 +76,7 @@ const DashboardPortfolio = () => {
                     style={{
                       display: "flex",
                       justifyContent: "flex-end",
-                      marginTop: "-40px",
+                      // marginTop: "-40px",
                     }}
                   >
                     <Delete

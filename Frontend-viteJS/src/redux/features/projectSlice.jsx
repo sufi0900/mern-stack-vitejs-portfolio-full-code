@@ -93,6 +93,7 @@ export const updateProject = createAsyncThunk(
 );
 export const clearProject = createAction("Project/clearProject");
 
+// eslint-disable-next-line react-refresh/only-export-components
 const ProjectSlice = createSlice({
   name: "Project",
   initialState: {

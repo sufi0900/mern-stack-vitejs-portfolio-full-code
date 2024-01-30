@@ -39,7 +39,15 @@ const Register = () => {
       return toast.error("Password should match");
     }
     if (email && password && firstName && lastName && confirmPassword) {
-      dispatch(register({ formValue, navigate, toast }));
+      dispatch(register({ formValue, navigate, toast }))
+        .then(() => {
+          // Redirect to the login page after successful registration
+          navigate("/login");
+        })
+        .catch((error) => {
+          // Handle registration error if needed
+          console.error("Registration error:", error);
+        });
     }
   };
 

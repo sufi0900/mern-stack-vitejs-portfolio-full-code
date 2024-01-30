@@ -93,6 +93,7 @@ export const updateServices = createAsyncThunk(
 );
 export const clearServices = createAction("Services/clearServices");
 
+// eslint-disable-next-line react-refresh/only-export-components
 const ServicesSlice = createSlice({
   name: "Services",
   initialState: {

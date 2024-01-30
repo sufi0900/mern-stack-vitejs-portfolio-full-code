@@ -60,7 +60,9 @@ app.get("/", (req, res) => {
 const port = process.env.PORT || 8000;
 
 mongoose
-  .connect("mongodb://localhost:27017/mern-stack-portfolio")
+  .connect(
+    "mongodb+srv://sufi0900:sufi0900@cluster0.miah2mi.mongodb.net/mern-stack-vitejs-portfolio?retryWrites=true&w=majority"
+  )
   .then(() => {
     app.listen(port, () => console.log(`Server running on port ${port}`));
   })
